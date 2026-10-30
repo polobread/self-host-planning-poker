@@ -63,7 +63,8 @@ bootstrapApplication(AppComponent, {
       provideTranslocoLocale({
         langToLocaleMapping: {
           en: 'en-US',
-          fr: 'fr-FR'
+          fr: 'fr-FR',
+          zh: 'zh-TW'
         }
       }),
       provideRouter(routes),
@@ -72,7 +73,9 @@ bootstrapApplication(AppComponent, {
         config: translocoConfig({
           availableLangs: ['af', 'ar', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'fi', 'fr', 'he', 'hu', 'it', 'ja', 'ko',
             'nl', 'no', 'pl', 'pt', 'ro', 'ru', 'sr', 'sv', 'tr', 'uk', 'vi', 'zh'],
+          defaultLang: 'en',
           fallbackLang: 'en',
+          reRenderOnLangChange: true,
           prodMode: environment.production,
           missingHandler: {
             useFallbackTranslation: true

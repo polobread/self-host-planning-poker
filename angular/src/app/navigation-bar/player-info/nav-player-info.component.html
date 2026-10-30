@@ -17,7 +17,7 @@
     {{ userInformation.getName() }}
     <div class="btn-group mx-2" role="group" *transloco="let t">
       <button class="btn btn-outline-light btn-sm"
-              [attr.aria-label]="t('buttons.edit')"
+              [attr.aria-label]="t('navbar.playerInfo.actions.editPlayerName')"
               [ngbTooltip]="t('navbar.playerInfo.actions.editPlayerName')"
               placement="bottom"
               (click)="openEdit(gameEdit)">

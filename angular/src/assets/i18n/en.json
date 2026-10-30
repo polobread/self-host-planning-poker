@@ -72,7 +72,8 @@
   "footer": {
     "github": "GitHub",
     "dockerhub": "DockerHub",
-    "license": "License"
+    "license": "License",
+    "language": "Language"
   },
   "errors": {
     "disconnect": "Disconnected from game. Reason: \"{{reason}}\". Will reconnect in {{delay}}s...",
