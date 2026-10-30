@@ -1,18 +1,19 @@
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { GameState } from '../../model/events';
 import { Subscription } from 'rxjs';
 import { Deck } from '../../model/deck';
 import { CurrentGameService } from '../current-game.service';
 import { PlayerHandComponent } from './player-hand/player-hand.component';
-import { KeyValuePipe, NgFor } from '@angular/common';
-import { TranslocoDirective } from '@ngneat/transloco';
+import { KeyValuePipe } from '@angular/common';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'shpp-card-table',
     templateUrl: './card-table.component.html',
     styleUrls: ['./card-table.component.scss'],
     standalone: true,
-    imports: [TranslocoDirective, NgFor, PlayerHandComponent, KeyValuePipe]
+    imports: [TranslocoDirective, PlayerHandComponent, KeyValuePipe]
 })
 export class CardTableComponent implements OnDestroy {
   state: GameState = {}
@@ -50,7 +51,4 @@ export class CardTableComponent implements OnDestroy {
     this.deckSubscription.unsubscribe();
   }
 
-  getId(item: any): string {
-    return item.key;
-  }
 }

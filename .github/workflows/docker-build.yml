@@ -1,0 +1,53 @@
+name: Docker local build
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docker:
+    name: Build and smoke test (${{ matrix.arch }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4.4.0
+        with:
+          platforms: arm64
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4.4.1
+      - name: Build local image
+        uses: docker/build-push-action@v7.4.0
+        with:
+          context: .
+          platforms: linux/${{ matrix.arch }}
+          push: false
+          load: true
+          tags: self-host-planning-poker:local
+          cache-from: type=gha,scope=${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
+      - name: Start local container
+        run: docker run --detach --name planning-poker-smoke --publish 127.0.0.1:8000:8000 self-host-planning-poker:local
+      - name: Check web and Socket.IO endpoints
+        run: |
+          curl --fail --silent --show-error --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:8000/ --output /tmp/planning-poker.html
+          grep -q '<shpp-root>' /tmp/planning-poker.html
+          curl --fail --silent --show-error http://127.0.0.1:8000/main.js --output /tmp/planning-poker-main.js
+          curl --fail --silent --show-error 'http://127.0.0.1:8000/socket.io/?EIO=4&transport=polling' --output /tmp/planning-poker-socketio.json
+          grep -q '"sid"' /tmp/planning-poker-socketio.json
+      - name: Container logs and cleanup
+        if: ${{ always() }}
+        run: |
+          if docker container inspect planning-poker-smoke > /dev/null 2>&1; then
+            docker logs planning-poker-smoke
+            docker rm --force planning-poker-smoke
+          fi

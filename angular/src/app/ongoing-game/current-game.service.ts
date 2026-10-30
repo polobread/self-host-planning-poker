@@ -1,11 +1,11 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Manager, Socket } from 'socket.io-client';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject, filter, map, Observable, Subject } from 'rxjs';
 import { ErrorMessage, GameInfo, GameState } from '../model/events';
 import { Deck, decksDict } from '../model/deck';
-import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { HashMap, TranslocoService } from '@ngneat/transloco';
+import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
+import { TranslocoService } from '@jsverse/transloco';
 import { UserInformationService } from '../shared/user-info/user-information.service';
 import { ToastService } from '../shared/toast/toast.service';
 import { PathLocationStrategy } from '@angular/common';
@@ -166,29 +166,25 @@ export class CurrentGameService {
     }
   }
 
-  private info(key: string, translateParams?: HashMap): void {
+  private info(key: string, translateParams?: Record<string, unknown>): void {
     this.transloco.selectTranslate(key, translateParams).subscribe((text) => {
       console.info(text);
       this.toastService.show(text, { className: 'bg-info' });
     })
   }
 
-  private success(key: string, translateParams?: HashMap): void {
+  private success(key: string, translateParams?: Record<string, unknown>): void {
     this.transloco.selectTranslate(key, translateParams).subscribe((text) => {
       console.info(text);
       this.toastService.show(text, { className: 'bg-success text-light' });
     });
   }
 
-  private error(key: string, translateParams?: HashMap): void {
+  private error(key: string, translateParams?: Record<string, unknown>): void {
     this.transloco.selectTranslate(key, translateParams).subscribe((text) => {
       console.error(text);
       this.toastService.show(text, { className: 'bg-danger text-light' });
     })
   }
 
-}
-
-export const canActivateGame: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-  return inject(CurrentGameService).canActivate(route);
 }

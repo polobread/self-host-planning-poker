@@ -2,14 +2,11 @@
 
 A hassle-free Planning Poker application to deploy on your NAS.
 
-[![Docker Hub](https://img.shields.io/docker/v/axeleroy/self-host-planning-poker?sort=semver&logo=docker)](https://hub.docker.com/r/axeleroy/self-host-planning-poker/tags)
-[![Docker Hub](https://img.shields.io/docker/pulls/axeleroy/self-host-planning-poker?logo=docker)](https://hub.docker.com/r/axeleroy/self-host-planning-poker/tags)
-[![GitHub release](https://img.shields.io/github/v/release/axeleroy/self-host-planning-poker?logo=github&logoColor=959DA5)](https://github.com/axeleroy/self-host-planning-poker/pkgs/container/self-host-planning-poker)
 
 [![GitHub last commit](https://img.shields.io/github/last-commit/axeleroy/self-host-planning-poker?logo=github&logoColor=959DA5)](https://github.com/axeleroy/self-host-planning-poker/commits/main)
 [![License](https://img.shields.io/github/license/axeleroy/self-host-planning-poker?logo=github&logoColor=959DA5)](https://github.com/axeleroy/self-host-planning-poker/blob/main/LICENSE)
 [![Tests](https://github.com/axeleroy/self-host-planning-poker/actions/workflows/tests.yml/badge.svg)](https://github.com/axeleroy/self-host-planning-poker/actions/workflows/tests.yml)
-[![Docker build](https://github.com/axeleroy/self-host-planning-poker/actions/workflows/publish.yml/badge.svg)](https://github.com/axeleroy/self-host-planning-poker/actions/workflows/publish.yml)
+[![Docker build](https://github.com/polobread/self-host-planning-poker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/polobread/self-host-planning-poker/actions/workflows/docker-build.yml)
 [![Crowdin](https://badges.crowdin.net/self-host-planning-poker/localized.svg)](https://crowdin.com/project/self-host-planning-poker)
 
 ## What is it?
@@ -37,21 +34,26 @@ Deploying the application is easy as it's self-contained in a single container.
 All you need is to create a volume to persist the games settings (ID, name and deck).
 
 ### Docker
+
+Build the image from this checkout, then run it locally. No DockerHub or GHCR
+account is required. Docker downloads the public base images anonymously.
+
 ```bash
+docker build --tag self-host-planning-poker:local .
 docker run \
   -v planning-poker-data:/data \
-  -p 8000:8000 \
-  axeleroy/self-host-planning-poker:latest
+  -p 127.0.0.1:8000:8000 \
+  self-host-planning-poker:local
 ```
 
 ### docker-compose
 ```yml
-version: "3"
 services:
   planning-poker:
-    image: axeleroy/self-host-planning-poker:latest
+    build: .
+    image: self-host-planning-poker:local
     ports:
-      - 8000:8000
+      - 127.0.0.1:8000:8000
     volumes:
       - planning-poker-data:/data
 volumes:
@@ -98,12 +100,14 @@ The app consists of two parts:
 
 ### Back-end development
 
+Use Python 3.15.2 (see `.python-version`); local, CI and Docker environments use this version.
+
 You must first initialise a virtual environment and install the dependencies
 
 ```sh
 # Run the following commands in the flask/ folder
-python3 -m venv env
-source env/bin/activate
+python3.15 -m venv .venv
+source .venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
@@ -131,25 +135,53 @@ python -m unittest
 > docker run --rm -it \
 >   -v $(pwd)/flask:/app \
 >   -p 5000:5000 \
->   python:3.11-slim \
->   bash -c "cd /app; pip install -r requirements.txt; FLASK_DEBUG=1 gunicorn --worker-class eventlet -w 1 app:app --bind 0.0.0.0:5000"
+>   python:3.15.2-slim \
+>   bash -c "cd /app; pip install -r requirements.txt; FLASK_DEBUG=1 gunicorn --worker-class gevent -w 1 app:app --bind 0.0.0.0:5000"
 > ```
 > </details>
 
-First make sure that [Node.js](https://nodejs.org/en/) (preferably LTS) is installed.
+First make sure that [Node.js](https://nodejs.org/en/) 26.13.0 and npm 12.2.1 are installed (see `angular/.nvmrc`).
 Then, install dependencies and launch the development server
 
 ```sh
 # Run the following commands in the angular/ folder
-npm install
+npm ci
 npm start
 ```
+
+### Front-end tests
+
+Run `npm run test:ci` in `angular/` for a single Vitest run, or `npm test` to
+watch tests. Angular initializes the DOM environment and TestBed automatically.
+
+### TypeScript checks
+
+Run `npm run typecheck` in `angular/` to check application code with TypeScript 7.
+The project follows [Microsoft's side-by-side setup](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-60): `@typescript/native` provides
+TypeScript 7's `tsc`, while the `typescript` alias points to the TypeScript 6 API
+compatibility package required by Angular 22 and ESLint. Angular builds continue
+to validate templates through their supported compiler API.
+
+### Front-end builds
+
+The Angular application builder uses esbuild/Vite. `npm run build` keeps the
+initial bundle below the existing 500 kB warning budget; `npm run bundle:report`
+adds build statistics. PostCSS removes unused CSS while preserving runtime
+ng-bootstrap classes. The QR dialog and its ESM encoder load only when opened.
+
+Build output stays in `angular/dist/self-host-planning-poker/`, which Docker
+copies to Flask's `static/` directory. The Flask template loads `main.js` and
+`polyfills.js`; the application builder no longer emits a separate `runtime.js`.
 
 ### Building Docker image
 
 ```sh
-# After checking out the project
-docker build . -t axeleroy/self-host-planning-poker:custom
-# Alternatively, if you don't want to checkout the project
-docker build https://github.com/axeleroy/self-host-planning-poker -t axeleroy/self-host-planning-poker:custom
+docker build --tag self-host-planning-poker:local .
 ```
+
+Open http://localhost:8000 after starting the container with the command above.
+The named `planning-poker-data` volume preserves game settings between runs.
+
+GitHub Actions builds and smoke-tests separate amd64 and arm64 images in its
+local runner image store (`push: false`, `load: true`). It does not log in to
+DockerHub or GHCR and does not publish images. No registry credentials are needed.

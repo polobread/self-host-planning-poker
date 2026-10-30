@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
-import { TranslocoDirective } from '@ngneat/transloco';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { BaseHrefPipe } from "../shared/base-href.pipe";
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
   selector: 'shpp-navigation-bar',
   templateUrl: './navigation-bar.component.html',

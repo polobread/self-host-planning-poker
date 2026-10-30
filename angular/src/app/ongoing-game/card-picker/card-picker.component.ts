@@ -1,16 +1,17 @@
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { CardValue, Deck } from '../../model/deck';
 import { Subscription } from 'rxjs';
 import { CurrentGameService } from '../current-game.service';
 import { UserInformationService } from '../../shared/user-info/user-information.service';
 import { PickableCardComponent } from './card/pickable-card.component';
-import { NgIf, NgFor } from '@angular/common';
+
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'shpp-card-picker',
     templateUrl: './card-picker.component.html',
     standalone: true,
-    imports: [NgIf, NgFor, PickableCardComponent]
+    imports: [PickableCardComponent]
 })
 export class CardPickerComponent implements OnDestroy {
   deck?: Deck

@@ -1,13 +1,14 @@
-FROM --platform=$BUILDPLATFORM docker.io/library/node:lts-slim AS node_builder
+FROM --platform=$BUILDPLATFORM docker.io/library/node:26.13.0-slim AS node_builder
 WORKDIR /angular
 COPY angular/ /angular
-RUN npm config set update-notifier false && \
+RUN npm install --global npm@12.2.1 && \
+  npm config set update-notifier false && \
   npm config set fund false && \
   npm config set audit false && \
   npm ci
 RUN npm run build self-host-planning-poker
 
-FROM docker.io/library/python:3.11.7-alpine3.18
+FROM docker.io/library/python:3.15.2-alpine
 RUN adduser -H -D -u 1001 -G root default
 WORKDIR /app
 COPY --chown=1001:0 flask/ ./
@@ -18,4 +19,4 @@ RUN pip install --upgrade pip && \
   chown -R 1001:0 /app /data && \
   chmod -R g+w /app /data
 USER 1001
-CMD [ "gunicorn", "--worker-class", "eventlet", "-w", "1", "app:app", "--bind", "0.0.0.0:8000" ]
+CMD [ "gunicorn", "--no-control-socket", "--worker-class", "gevent", "-w", "1", "app:app", "--bind", "0.0.0.0:8000" ]

@@ -1,0 +1,17 @@
+.git
+.github
+**/node_modules
+**/.angular
+**/dist
+**/coverage
+**/.venv
+**/.env
+**/.env.*
+**/env
+**/__pycache__
+**/*.py[cod]
+**/*.db
+**/*.db-*
+**/*.log
+**/.DS_Store
+flask/static
