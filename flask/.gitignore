@@ -146,4 +146,4 @@ cython_debug/
 
 # Project specific
 *.db
-static/
+/static

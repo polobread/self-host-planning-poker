@@ -1,11 +1,11 @@
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { TranslocoService } from '@ngneat/transloco';
+import { TranslocoService } from '@jsverse/transloco';
 import { Subscription, switchMap } from 'rxjs';
 import { CurrentGameService } from './current-game.service';
 import { CardPickerComponent } from './card-picker/card-picker.component';
 import { TurnSummaryComponent } from './turn-summary/turn-summary.component';
-import { NgIf } from '@angular/common';
+
 import { CardTableComponent } from './card-table/card-table.component';
 import { NavPlayerInfoComponent } from '../navigation-bar/player-info/nav-player-info.component';
 import { NavGameInfoComponent } from '../navigation-bar/game-info/nav-game-info.component';
@@ -13,20 +13,20 @@ import { NavGameNameComponent } from '../navigation-bar/game-name/nav-game-name.
 import { ContainerComponent } from '../shared/container/container.component';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'shpp-ongoing-game-page',
     templateUrl: './ongoing-game-page.component.html',
     styleUrls: ['./ongoing-game-page.component.scss'],
     standalone: true,
     imports: [
-      ContainerComponent,
-      NavGameNameComponent,
-      NavGameInfoComponent,
-      NavPlayerInfoComponent,
-      CardTableComponent,
-      NgIf,
-      TurnSummaryComponent,
-      CardPickerComponent
-    ]
+    ContainerComponent,
+    NavGameNameComponent,
+    NavGameInfoComponent,
+    NavPlayerInfoComponent,
+    CardTableComponent,
+    TurnSummaryComponent,
+    CardPickerComponent
+]
 })
 export default class OngoingGamePageComponent implements OnDestroy {
   private gameInfoSubscription: Subscription;

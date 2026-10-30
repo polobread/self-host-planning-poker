@@ -1,7 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CardValue } from '../../../model/deck';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'shpp-pickable-card',
     templateUrl: './pickable-card.component.html',
     styleUrls: ['./pickable-card.component.scss'],

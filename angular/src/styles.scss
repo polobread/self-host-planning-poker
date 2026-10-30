@@ -1,18 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
-
-$primary: #198754;
-$enable-shadows: true;
-$color-mode-type: media-query;
-
-/* Importing Bootstrap SCSS file. */
-@import 'bootstrap/scss/bootstrap';
+@use 'bootstrap/scss/bootstrap' as bootstrap with (
+  $primary: #198754,
+  $enable-shadows: true,
+  $color-mode-type: media-query
+);
 
 :root {
-  --card-color: #{$green-500};
-  --navbar-bg-color: #{$green-400};
-  --navbar-border-bottom-color: #{$green-800};
+  --card-color: #{bootstrap.$green-500};
+  --navbar-bg-color: #{bootstrap.$green-400};
+  --navbar-border-bottom-color: #{bootstrap.$green-800};
   --navbar-text-color: white;
-  --navbar-muted-color: $gray-400;
+  --navbar-muted-color: #{bootstrap.$gray-400};
 }
 
 .bg-primary {
@@ -38,7 +35,7 @@ $color-mode-type: media-query;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: $body-bg;
+  background-color: bootstrap.$body-bg;
   transition: transform 200ms ease-in-out, background-color 100ms ease-in, outline-color 100ms ease-in;
 
   @media (prefers-reduced-motion: reduce) {
@@ -46,14 +43,14 @@ $color-mode-type: media-query;
   }
 
   &:not(.card-disabled, .dashed) {
-    box-shadow: 0 0 15px 0 $gray-400;
+    box-shadow: 0 0 15px 0 bootstrap.$gray-400;
   }
 
-  @include color-mode(dark) {
-    background-color: $gray-800;
+  @media (prefers-color-scheme: dark) {
+    background-color: bootstrap.$gray-800;
     color: white;
     &:not(.card-disabled, .dashed) {
-      box-shadow: 0 0 15px 0 $gray-800;
+      box-shadow: 0 0 15px 0 bootstrap.$gray-800;
     }
   }
 }
@@ -64,12 +61,12 @@ $color-mode-type: media-query;
 }
 
 .card-disabled {
-  background: $gray-200;
-  outline-color: $gray-600;
-  color: $gray-700;
-  @include color-mode(dark) {
-    background: $gray-800;
-    color: $gray-600;
+  background: bootstrap.$gray-200;
+  outline-color: bootstrap.$gray-600;
+  color: bootstrap.$gray-700;
+  @media (prefers-color-scheme: dark) {
+    background: bootstrap.$gray-800;
+    color: bootstrap.$gray-600;
   }
 }
 

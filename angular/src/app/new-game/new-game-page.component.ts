@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Deck } from '../model/deck';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
@@ -10,6 +10,7 @@ import { FooterComponent } from '../shared/footer/footer.component';
 import { PathLocationStrategy } from '@angular/common';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
   selector: 'shpp-new-game-page',
   templateUrl: './new-game-page.component.html',

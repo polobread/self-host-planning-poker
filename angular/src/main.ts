@@ -1,14 +1,20 @@
-import { enableProdMode, Injectable } from '@angular/core';
+import { enableProdMode, Injectable, Injector, inject, provideZoneChangeDetection } from '@angular/core';
 import {environment} from './environments/environment';
 import {AppComponent} from './app/app.component';
-import { provideTranslocoLocale } from '@ngneat/transloco-locale';
+import { provideTranslocoLocale } from '@jsverse/transloco-locale';
 import {bootstrapApplication} from '@angular/platform-browser';
-import {provideRouter, Routes} from "@angular/router";
+import {CanActivateFn, provideRouter, Routes} from "@angular/router";
 import {usernameSetGuard} from "./app/shared/user-info/username-set.service";
-import {canActivateGame} from "./app/ongoing-game/current-game.service";
 import { HttpClient, provideHttpClient } from "@angular/common/http";
-import { provideTransloco, Translation, translocoConfig, TranslocoLoader } from '@ngneat/transloco';
+import { provideTransloco, Translation, translocoConfig, TranslocoLoader } from '@jsverse/transloco';
 import { APP_BASE_HREF, PathLocationStrategy, PlatformLocation } from '@angular/common';
+
+// Load the game connection only when entering a room.
+const canActivateGame: CanActivateFn = (route) => {
+  const injector = inject(Injector);
+  return import('./app/ongoing-game/current-game.service').then(({ CurrentGameService }) =>
+    injector.get(CurrentGameService).canActivate(route));
+};
 
 const routes: Routes = [
   {
@@ -53,6 +59,7 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 
 bootstrapApplication(AppComponent, {
     providers: [
+      provideZoneChangeDetection(),
       provideTranslocoLocale({
         langToLocaleMapping: {
           en: 'en-US',

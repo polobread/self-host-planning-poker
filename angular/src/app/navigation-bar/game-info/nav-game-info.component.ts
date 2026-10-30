@@ -1,18 +1,19 @@
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { GameInfo } from '../../model/events';
 import { CurrentGameService } from '../../ongoing-game/current-game.service';
 import { Deck } from '../../model/deck';
 import { NgbOffcanvas, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { GameFormComponent } from '../../shared/game-form/game-form.component';
-import { NgIf } from '@angular/common';
-import { TranslocoDirective } from '@ngneat/transloco';
+
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'shpp-game-info',
     templateUrl: './nav-game-info.component.html',
     standalone: true,
-    imports: [TranslocoDirective, NgIf, NgbTooltip, GameFormComponent]
+    imports: [TranslocoDirective, NgbTooltip, GameFormComponent]
 })
 export class NavGameInfoComponent implements OnDestroy {
 

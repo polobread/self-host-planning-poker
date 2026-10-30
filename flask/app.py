@@ -18,7 +18,7 @@ app.config['SECRET_KEY'] = 'secret!'
 
 if app.config['DEBUG']:
     real_db = SqliteDatabase('database.db')
-    socketio = SocketIO(app, cors_allowed_origins=[
+    socketio = SocketIO(app, async_mode="gevent", cors_allowed_origins=[
         'http://localhost:4200', 'http://localhost:5000',
         'http://127.0.0.1:4200', 'http://127.0.0.1:5000'
     ])
@@ -26,7 +26,7 @@ if app.config['DEBUG']:
 else:
     check_db_file_permissions()
     real_db = SqliteDatabase('/data/database.db')
-    socketio = SocketIO(app)
+    socketio = SocketIO(app, async_mode="gevent")
 database_proxy.initialize(real_db)
 if database_proxy.is_closed():
     database_proxy.connect()
@@ -84,7 +84,7 @@ def join(data):
 
 
 @socketio.event
-def disconnect():
+def disconnect(reason):
     player_id = session['player_id']
     game_id = session['game_id']
 

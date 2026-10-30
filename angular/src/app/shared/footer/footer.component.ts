@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { TranslocoDirective } from '@ngneat/transloco';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'shpp-footer',
   templateUrl: './footer.component.html',
   standalone: true,

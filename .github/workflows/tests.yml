@@ -2,8 +2,7 @@ name: Tests
 
 on:
   push:
-    branches:
-      - 'main'
+    branches: ['main']
   pull_request:
 
 jobs:
@@ -11,55 +10,35 @@ jobs:
     name: Back-end tests
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v4
-      -
-        name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
         with:
-          python-version: '3.11'
-          cache: 'pip'
-      -
-        name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          cd flask; pip install -r requirements.txt
-      -
-        name: Run tests
-        run: python -m unittest
-  frontend-tests:
-    name: Front-end tests
-    if: ${{ false }}  # Disabled as there are no tests
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: flask/requirements.txt
+      - name: Install dependencies
+        run: python -m pip install -r flask/requirements.txt
+      - name: Run tests
+        working-directory: flask
+        run: python -m unittest discover -s test -v
+  frontend-checks:
+    name: Front-end tests, typecheck, lint and build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: angular
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v4
-      -
-        name: Setup Node
-        uses: actions/setup-node@v4.0.0
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version-file: angular/.nvmrc
+          cache: npm
           cache-dependency-path: angular/package-lock.json
-      -
-        name: Setup Chrome
-        uses: browser-actions/setup-chrome@latest
-      -
-        name: Run tests
-        run: cd angular; npm i; CHROMIUM_BIN=$(which chrome) npm test
-  frontend-lint:
-    name: Front-end linting
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4.0.0
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: angular/package-lock.json
-      - name: Run linting
-        run: cd angular; npm i; npm run lint
+      - name: Set up npm
+        run: npm install --global npm@12.2.1
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm run test:ci
+      - name: Check types, lint and build
+        run: npm run typecheck && npm run lint && npm run build

@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NgbOffcanvas, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { UserInformationService } from '../../shared/user-info/user-information.service';
 import { PlayerNameFormComponent } from '../../shared/player-name-form/player-name-form.component';
-import { TranslocoDirective } from '@ngneat/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
     selector: 'shpp-nav-player-info',
     templateUrl: './nav-player-info.component.html',
     standalone: true,
