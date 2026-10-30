@@ -1,13 +1,20 @@
 <ng-container *transloco="let t; read 'footer'">
-  <ul class="nav">
-    <li class="nav-item">
-      <a class="nav-link" target="_blank" href="https://github.com/axeleroy/self-host-planning-poker">{{ t('github') }}</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" target="_blank" href="https://hub.docker.com/r/axeleroy/self-host-planning-poker">{{ t('dockerhub') }}</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" target="_blank" href="https://github.com/axeleroy/self-host-planning-poker/blob/main/LICENSE">{{ t('license') }}</a>
-    </li>
-  </ul>
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 py-2">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" target="_blank" rel="noopener noreferrer" href="https://github.com/polobread/self-host-planning-poker">{{ t('github') }}</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" target="_blank" rel="noopener noreferrer" href="https://github.com/polobread/self-host-planning-poker/blob/main/LICENSE">{{ t('license') }}</a>
+      </li>
+    </ul>
+    <div class="d-flex align-items-center gap-2">
+      <label for="language-select">{{ t('language') }}</label>
+      <select id="language-select" class="form-select form-select-sm w-auto" [ngModel]="language.activeLanguage" (ngModelChange)="language.selectLanguage($event)">
+        @for (item of language.languages; track item.id) {
+          <option [value]="item.id">{{ item.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
 </ng-container>

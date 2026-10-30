@@ -2,12 +2,13 @@
 
 A hassle-free Planning Poker application to deploy on your NAS.
 
+Maintained at [polobread/self-host-planning-poker](https://github.com/polobread/self-host-planning-poker),
+based on [the original project by axeleroy](https://github.com/axeleroy/self-host-planning-poker).
 
-[![GitHub last commit](https://img.shields.io/github/last-commit/axeleroy/self-host-planning-poker?logo=github&logoColor=959DA5)](https://github.com/axeleroy/self-host-planning-poker/commits/main)
-[![License](https://img.shields.io/github/license/axeleroy/self-host-planning-poker?logo=github&logoColor=959DA5)](https://github.com/axeleroy/self-host-planning-poker/blob/main/LICENSE)
-[![Tests](https://github.com/axeleroy/self-host-planning-poker/actions/workflows/tests.yml/badge.svg)](https://github.com/axeleroy/self-host-planning-poker/actions/workflows/tests.yml)
+[![GitHub last commit](https://img.shields.io/github/last-commit/polobread/self-host-planning-poker?logo=github&logoColor=959DA5)](https://github.com/polobread/self-host-planning-poker/commits/main)
+[![License](https://img.shields.io/github/license/polobread/self-host-planning-poker?logo=github&logoColor=959DA5)](https://github.com/polobread/self-host-planning-poker/blob/main/LICENSE)
+[![Tests](https://github.com/polobread/self-host-planning-poker/actions/workflows/tests.yml/badge.svg)](https://github.com/polobread/self-host-planning-poker/actions/workflows/tests.yml)
 [![Docker build](https://github.com/polobread/self-host-planning-poker/actions/workflows/docker-build.yml/badge.svg)](https://github.com/polobread/self-host-planning-poker/actions/workflows/docker-build.yml)
-[![Crowdin](https://badges.crowdin.net/self-host-planning-poker/localized.svg)](https://crowdin.com/project/self-host-planning-poker)
 
 ## What is it?
 
@@ -20,13 +21,13 @@ It features:
   * Spectator mode
   * Responsive layout
   * Vote summary
-  * Translations _(English, French, German, Italian and Polish. [Contributions welcome!](#im-a-user-and-want-to-contribute-translations))_
+  * Translations _(including English and Traditional Chinese for Taiwan. [Contributions welcome!](#im-a-user-and-want-to-contribute-translations))_
  
 It does not have fancy features like issues management, Jira integration or timers.
 
 ## Screenshots
-<a href="https://github.com/axeleroy/self-host-planning-poker/blob/main/assets/screenshot.png"><img alt="Application screenshot with cards face down" src="https://github.com/axeleroy/self-host-planning-poker/blob/main/assets/screenshot.png" width="412px"></a>
-<a href="https://github.com/axeleroy/self-host-planning-poker/blob/main/assets/screenshot.png"><img alt="Application screenshot with cards revealed" src="https://github.com/axeleroy/self-host-planning-poker/blob/main/assets/screenshot-revealed.png" width="412px"></a>
+<a href="assets/screenshot.png"><img alt="Application screenshot with cards face down" src="assets/screenshot.png" width="412px"></a>
+<a href="assets/screenshot-revealed.png"><img alt="Application screenshot with cards revealed" src="assets/screenshot-revealed.png" width="412px"></a>
 
 ## Deployment
 
@@ -34,6 +35,13 @@ Deploying the application is easy as it's self-contained in a single container.
 All you need is to create a volume to persist the games settings (ID, name and deck).
 
 ### Docker
+
+Check out this repository first:
+
+```sh
+git clone https://github.com/polobread/self-host-planning-poker.git
+cd self-host-planning-poker
+```
 
 Build the image from this checkout, then run it locally. No DockerHub or GHCR
 account is required. Docker downloads the public base images anonymously.
@@ -64,7 +72,14 @@ volumes:
 
 | Variable              | Meaning                                                                                                                                                                                                                                          | Example            |
 |-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|
-| `APP_ROOT` (optional) | Allows you to deploy to another path than `/`.<br>See [Configuration examples for deploying on sub‐paths](https://github.com/axeleroy/self-host-planning-poker/wiki/Configuration-examples-for-deploying-on-sub%E2%80%90paths) for more details. | `APP_ROOT=/poker/` |
+| `APP_ROOT` (optional) | Allows you to deploy to another path than `/`.<br>See [Deploying on a subpath](#deploying-on-a-subpath). | `APP_ROOT=/poker/` |
+
+### Deploying on a subpath
+
+Set `APP_ROOT=/poker/` on the container to generate the application base URL and
+asset URLs with that prefix. Configure your reverse proxy to forward `/poker/`
+to the container with the prefix removed, including `/poker/socket.io/` and its
+WebSocket upgrade requests. `APP_ROOT` does not change Flask's route paths.
 
 ### Running behind a reverse-proxy
 
@@ -72,31 +87,41 @@ Refer to [Socket.IO's documentation](https://socket.io/docs/v4/reverse-proxy/)  
 
 ### Customization
 
-See [Customizing the application's style and icon](https://github.com/axeleroy/self-host-planning-poker/wiki/Customizing-the-application's-style-and-icon).
+Edit [overrides.css](angular/src/assets/overrides.css) for custom colors; it includes
+an example theme. Replace [icon.svg](angular/src/assets/icon.svg) and the files in
+[assets/favicon](angular/src/assets/favicon/) to change the application icon.
+Rebuild the Docker image after editing these assets. Flask serves `overrides.css`
+after the generated application stylesheet.
 
 ## Getting involved
 
-### I'm a developer and I want to help
+### Code, bugs and feature proposals
 
-You are welcome to open Pull Requests resolving issues in the [Project](https://github.com/users/axeleroy/projects/1/views/1) or 
-tagged [pr-welcome](https://github.com/axeleroy/self-host-planning-poker/issues?q=is%3Aissue+is%3Aopen+label%3Apr-welcome).
-Don't forget to mention the issue you want to close 😉
-
-### I'm a user and I need help / I encountered a bug / I have a feature request
-
-[Open an issue](https://github.com/axeleroy/self-host-planning-poker/issues/new) and I'll take a look at it.
+Submit changes through [pull requests](https://github.com/polobread/self-host-planning-poker/pulls)
+to this repository. Include reproduction steps for bug fixes and run the relevant
+checks from the development guide below. Issues are currently disabled in this fork.
 
 ### I'm a user and want to contribute translations
 
-There is a [Crowdin project](https://crowdin.com/project/self-host-planning-poker) that lets you add translations for
-your language. If your language is not available, feel free to contact me over Crowdin.
+Edit the JSON files in [angular/src/assets/i18n](angular/src/assets/i18n/) and submit
+a pull request to this repository. Use [en.json](angular/src/assets/i18n/en.json)
+as the key reference and preserve interpolation placeholders such as `{{gameName}}`.
+The optional Crowdin workflow requires the maintainer's own project credentials;
+translation contributions can be made directly in Git.
+
+### 台灣繁體中文
+
+介面支援台灣繁體中文；瀏覽器語言為 `zh-TW` 或 `zh-Hant-TW` 時會自動使用繁體中文，
+數字使用 `zh-TW` locale。也可在首頁下方的「語言」選單選擇「繁體中文（台灣）」；
+選擇會儲存在目前瀏覽器，下次開啟時繼續使用。Planning Poker、Fibonacci、QR Code、GitHub 與 License 等術語保留英文。翻譯檔為
+[zh.json](angular/src/assets/i18n/zh.json)。
 
 ## Development
 
 The app consists of two parts:
 
 * a [back-end](flask/) written in Python with [Flask](https://flask.palletsprojects.com/), [Flask-SocketIO](https://flask-socketio.readthedocs.io/en/latest/index.html) and [peewee](http://docs.peewee-orm.com/en/latest/).
-* a [front-end](angular/) written with [Angular](https://angular.io) and [Socket.IO](https://socket.io/).
+* a [front-end](angular/) written with [Angular](https://angular.dev) and [Socket.IO](https://socket.io/).
 
 ### Back-end development
 
@@ -120,7 +145,7 @@ FLASK_DEBUG=1 python app.py
 
 After initializing the virtual environment, run this command in the `flask/` directory:
 ```sh
-python -m unittest
+python -m unittest discover -s test -v
 ```
 
 ### Front-end development
