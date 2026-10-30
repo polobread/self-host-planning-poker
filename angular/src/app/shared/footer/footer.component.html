@@ -9,7 +9,7 @@
       </li>
     </ul>
     <div class="d-flex align-items-center gap-2">
-      <label for="language-select">{{ t('language') }}</label>
+      <label for="language-select" class="text-nowrap">{{ t('language') }}</label>
       <select id="language-select" class="form-select form-select-sm w-auto" [ngModel]="language.activeLanguage" (ngModelChange)="language.selectLanguage($event)">
         @for (item of language.languages; track item.id) {
           <option [value]="item.id">{{ item.label }}</option>
